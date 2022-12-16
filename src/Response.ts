@@ -5,6 +5,9 @@ import mime from 'mime-types';
 import cookie from 'cookie';
 import { Application } from './Application';
 import { setCharset } from './utils';
+import { isAbsolute } from 'path';
+import send from 'send';
+import onFinished from 'on-finished';
 
 const charsetRegExp = /;\s*charset\s*=/;
 
@@ -111,7 +114,83 @@ export class Response<ServerRequest extends IncomingMessage = Request> extends S
         return this.send(body);
     }
 
-    // TODO: sendFile
+    public sendFile(path: string, options?: send.SendOptions & { headers?: Record<string, string> }, doneCallback?: (err?: Error) => void) {
+        if(options && !options.root && !isAbsolute(path)) throw new TypeError('path must be absolute or specify root to res.sendFile()');
+
+        const pathName = encodeURI(path);
+        const file = send(this.req, pathName, options);
+
+        const callback = (err?: Error) => {
+            if(doneCallback) return doneCallback(err);
+            if(err) throw err;
+        };
+
+        let done = false;
+        let streaming: boolean | undefined = undefined;
+
+        function onAborted() {
+            if(done) return;
+            done = true;
+            callback(new Error('ECONNABORTED: Request aborted'));
+        }
+
+        function onDirectory() {
+            if(done) return;
+            done = true;
+            callback(new Error('EISDIR, read'));
+        }
+
+        function onError(err: Error) {
+            if(done) return;
+            done = true;
+            callback(err);
+        }
+
+        function onEnd() {
+            if(done) return;
+            done = true;
+            callback();
+        }
+
+        function onFile() {
+            streaming = false;
+        }
+
+        function onFinish(err: Error | null) {
+            if(err) return onAborted();
+            if(err) return onError(err);
+            if(done) return;
+
+            setImmediate(() => {
+                if(streaming !== false && !done) return onAborted();
+                if(done) return;
+                done = true;
+                callback();
+            });
+        }
+
+        function onStream() {
+            streaming = true;
+        }
+
+        file.on('directory', onDirectory);
+        file.on('end', onEnd);
+        file.on('error', onError);
+        file.on('file', onFile);
+        file.on('stream', onStream);
+        onFinished(this, onFinish);
+
+        if(options && options.headers) file.on('headers', (res: Response) => {
+            const obj = options.headers;
+            if(!obj) return;
+            const keys = Object.keys(obj);
+
+            for (const key of keys) res.setHeader(key, obj[key]);
+        });
+
+        file.pipe(this);
+    }
+
     // TODO: download
 
     public type(type: string) {

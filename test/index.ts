@@ -7,6 +7,10 @@ app.use(function test(req, res, next) {
     next();
 });
 
+app.get('/', (req, res) => {
+    res.sendFile('README.MD');
+});
+
 const router = new Router();
 
 router.get('/:id/', (req, res) => {
