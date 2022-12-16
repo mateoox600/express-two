@@ -1,6 +1,6 @@
 import { Request } from '../Request';
 import { Response } from '../Response';
-import { CalledParam, Handle, NextFunction, ParamHandle } from '../Types';
+import { CalledParam, Handle, MethodsType, NextFunction, ParamHandle } from '../Types';
 import { Layer } from './Layer';
 import parseurl from 'parseurl';
 import { Route } from './Route';
@@ -254,7 +254,7 @@ export class Router {
         return route;
     }
 
-    public method(name: string, path: string, ...handles: Handle[]) {
+    public method(name: MethodsType, path: string, ...handles: Handle[]) {
         const route = this.route(path);
         route.method(name, ...handles);
         return this;
@@ -266,6 +266,98 @@ export class Router {
 
     public post(path: string, ...handles: Handle[]) {
         return this.method('post', path, ...handles);
+    }
+
+    public put(path: string, ...handles: Handle[]) {
+        return this.method('put', path, ...handles);
+    }
+
+    public head(path: string, ...handles: Handle[]) {
+        return this.method('head', path, ...handles);
+    }
+
+    public delete(path: string, ...handles: Handle[]) {
+        return this.method('delete', path, ...handles);
+    }
+
+    public options(path: string, ...handles: Handle[]) {
+        return this.method('options', path, ...handles);
+    }
+
+    public trace(path: string, ...handles: Handle[]) {
+        return this.method('trace', path, ...handles);
+    }
+
+    public copy(path: string, ...handles: Handle[]) {
+        return this.method('copy', path, ...handles);
+    }
+
+    public lock(path: string, ...handles: Handle[]) {
+        return this.method('lock', path, ...handles);
+    }
+
+    public mkcol(path: string, ...handles: Handle[]) {
+        return this.method('mkcol', path, ...handles);
+    }
+
+    public move(path: string, ...handles: Handle[]) {
+        return this.method('move', path, ...handles);
+    }
+
+    public purge(path: string, ...handles: Handle[]) {
+        return this.method('purge', path, ...handles);
+    }
+
+    public propfind(path: string, ...handles: Handle[]) {
+        return this.method('propfind', path, ...handles);
+    }
+
+    public proppatch(path: string, ...handles: Handle[]) {
+        return this.method('proppatch', path, ...handles);
+    }
+
+    public unlock(path: string, ...handles: Handle[]) {
+        return this.method('report', path, ...handles);
+    }
+
+    public report(path: string, ...handles: Handle[]) {
+        return this.method('report', path, ...handles);
+    }
+
+    public mkactivity(path: string, ...handles: Handle[]) {
+        return this.method('mkactivity', path, ...handles);
+    }
+
+    public checkout(path: string, ...handles: Handle[]) {
+        return this.method('merge', path, ...handles);
+    }
+
+    public msearch(path: string, ...handles: Handle[]) {
+        return this.method('m-search', path, ...handles);
+    }
+
+    public notify(path: string, ...handles: Handle[]) {
+        return this.method('notify', path, ...handles);
+    }
+
+    public subscribe(path: string, ...handles: Handle[]) {
+        return this.method('subscribe', path, ...handles);
+    }
+
+    public unsubscribe(path: string, ...handles: Handle[]) {
+        return this.method('unsubscribe', path, ...handles);
+    }
+
+    public patch(path: string, ...handles: Handle[]) {
+        return this.method('patch', path, ...handles);
+    }
+
+    public search(path: string, ...handles: Handle[]) {
+        return this.method('search', path, ...handles);
+    }
+
+    public connect(path: string, ...handles: Handle[]) {
+        return this.method('connect', path, ...handles);
     }
 
     public getProtohost(url: string | undefined) {
