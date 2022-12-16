@@ -181,7 +181,19 @@ export class Response<ServerRequest extends IncomingMessage = Request> extends S
     // TODO: location
     // TODO: redirect
     // TODO: vary
-    // TODO: render
+    public render(name: string, options: Record<string, unknown> | ((err: Error, html: string) => void), callback?: (err: Error, html: string) => void) {
+        
+        const opts = (typeof options === 'function') ? {} : options;
+
+        let done = callback;
+        if(typeof options === 'function') done = options as (err: Error, html: string) => void;
+        if(!done) done = (err: Error, html: string) => {
+            if(err) throw err;
+            this.send(html);
+        };
+
+        this.app?.render(name, opts, done);
+    }
     
 
 }

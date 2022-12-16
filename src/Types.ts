@@ -6,6 +6,7 @@ export type NextFunction = (err?: string) => void;
 export type Handle = (req: Request, res: Response, next: NextFunction) => void;
 export type ErrorHandle = (error: string, req: Request, res: Response, next: NextFunction) => void;
 export type ParamHandle = (req: Request, res: Response, next: NextFunction, value: string, key: string) => void;
+export type RenderingEngine = (filePath: string, options: { cache?: boolean | undefined, [otherOptions: string]: unknown }, callback?: (err: Error, html: string) => void) => void;
 
 export type QueryParser = typeof QueryString.parse;
 
